@@ -18,28 +18,33 @@ if [ -f "$1" ]; then
 		echo "iRECOVERY: Exists."
 		echo "Entering PWNED-DFU"
 		./ipwndfu -p
-		sleep 3
-		echo "Patching Bootchain (Booting Unsigned Image)"
-		./ipwndfu --patch
-		echo "Sending iBoot"
-		sleep 3
-		./irecovery -f $1
-		echo "Sending iBoot"
-		sleep 5
-		./irecovery -f $1
-		echo "\n You Now Have 15 Seconds To Unplug & Replug Your iOS Device"
-		sleep 15
-		printf 'setenv boot-args usbserial=enabled\nsaveenv\n/exit\n' | ./irecovery -s
-		sleep 3
-		printf 'setenv boot-args usbserial=enabled\nsaveenv\n/exit\n' | ./irecovery -s
-		sleep 2
-		printf 'setenv boot-args usbserial=enabled\nsaveenv\n/exit\n' | ./irecovery -s
-		echo "DONE!"
-
-		else 
-		echo "iRECOVERY: is NOT in current directory."
-		exit 1
+		if [ $? = 0]
+		then
+			sleep 3
+			echo "Patching Bootchain (Booting Unsigned Image)"
+			./ipwndfu --patch
+			echo "Sending iBoot"
+			sleep 3
+			./irecovery -f $1
+			echo "Sending iBoot"
+			sleep 5
+			./irecovery -f $1
+			echo "\n You Now Have 15 Seconds To Unplug & Replug Your iOS Device"
+			sleep 15
+			printf 'setenv boot-args usbserial=enabled\nsaveenv\n/exit\n' | ./irecovery -s
+			sleep 3
+			printf 'setenv boot-args usbserial=enabled\nsaveenv\n/exit\n' | ./irecovery -s
+			sleep 2
+			printf 'setenv boot-args usbserial=enabled\nsaveenv\n/exit\n' | ./irecovery -s
+			echo "DONE!"
+		else
+			echo 'ipwndfu: did NOT complete correctly. Try again!'
 		fi
+	else 
+	echo "iRECOVERY: is NOT in current directory."
+	exit 1
+	fi
+
 	else 
     echo "iPWNDFU: is NOT in current directory."
     exit 1
